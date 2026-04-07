@@ -1,6 +1,11 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 df = pd.read_csv('../../data/tips.csv')
+
+# --- Derived metrics ---
+df["tip_pct"] = df["tip"] / df["total_bill"]
+df["revenue_per_person"] = df["total_bill"] / df["size"]
 
 print("\n--- Dataset Info---")
 print(df.info())
@@ -28,3 +33,28 @@ print(revenue_by_time)
 avg_bill_by_size = df.groupby('size')['total_bill'].sum()
 print("\nAverage Bill By Party Size:")
 print(avg_bill_by_size)
+
+
+# Revenue Efficiency by Day
+print("\nAverage revenue Per Customer Per Day:")
+print(df.groupby("day")["revenue_per_person"].mean().sort_values(ascending=False))
+
+# Tip Behavior by Time
+print("\nAverage Tip % by Time:")
+print(df.groupby("time")["tip_pct"].mean())
+
+# Party Size Profitability
+print("\nRevenue Per Person By Party Size:")
+print(df.groupby("size")["revenue_per_person"].mean())
+
+
+
+# Chart
+rev_day = df.groupby("day")["total_bill"].sum()
+
+rev_day.plot(kind="bar")
+plt.title("Total Revenue by Day")
+plt.ylabel("Revenue")
+plt.tight_layout()
+plt.savefig("charts/revenue_by_day.png")
+plt.close()
